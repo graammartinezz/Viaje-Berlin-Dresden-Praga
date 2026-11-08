@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Berlín, Dresden y Praga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a quiet winter journal. One continuous timeline per day, a thin frosted line with small nodes, no boxes. */
+:root{
+  --night:#1c2b3c;      /* text, deep winter navy */
+  --slate:#64778a;      /* secondary text */
+  --frost:#eef3f7;      /* background */
+  --ice:#cfdce7;        /* lines */
+  --glacier:#3d6f93;    /* accent */
+  --spruce:#2f5d50;     /* free bookings */
+  --berry:#8a2f3c;      /* paid tickets */
+  --snow:#ffffff;
+  --display:"DM Serif Display", Georgia, "Times New Roman", serif;
+  --body:"Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --night:#e6edf3; --slate:#9bb0c2; --frost:#0f1822; --ice:#273646; --glacier:#8cc0e3;
+    --spruce:#7cc4a9; --berry:#e58d9a; --snow:#16212d; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --night:#e6edf3; --slate:#9bb0c2; --frost:#0f1822; --ice:#273646; --glacier:#8cc0e3;
+  --spruce:#7cc4a9; --berry:#e58d9a; --snow:#16212d; color-scheme: dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--frost);color:var(--night);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+.wrap{max-width:680px;margin:0 auto;padding:0 20px}
+header.top{padding:28px 0 14px}
+.eyebrow{margin:0;color:var(--glacier);font-weight:700;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase}
+.trip{font-family:var(--display);font-weight:400;font-size:2.4rem;line-height:1.05;margin:6px 0 0;text-wrap:balance}
+.sub{color:var(--slate);margin:8px 0 0}
+nav.days{position:sticky;top:0;z-index:5;background:var(--frost);border-bottom:1px solid var(--ice)}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;max-width:680px;margin:0 auto;padding:0 12px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;background:none;border:0;border-bottom:3px solid transparent;color:var(--slate);padding:12px 10px 9px;cursor:pointer;font-family:var(--body);text-align:center}
+.tab b{display:block;font-size:1rem;font-weight:700;color:inherit}
+.tab small{display:block;font-size:.72rem;letter-spacing:.04em}
+.tab[aria-selected="true"]{color:var(--night);border-bottom-color:var(--glacier)}
+.tab:focus-visible,.route:focus-visible{outline:3px solid var(--glacier);outline-offset:2px;border-radius:6px}
+main{padding:26px 0 40px}
+.dayhead h2{font-family:var(--display);font-weight:400;font-size:2rem;line-height:1.1;margin:0;text-wrap:balance}
+.dayhead .city{margin:0 0 4px;color:var(--glacier);font-weight:700;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase}
+.dayhead p.intro{margin:8px 0 0;color:var(--slate);max-width:60ch}
+.musts{margin:20px 0 6px;padding:0;list-style:none;display:grid;gap:6px}
+.musts li{display:flex;gap:12px;align-items:baseline;font-size:.95rem}
+.musts time{font-weight:700;min-width:48px;font-variant-numeric:tabular-nums;color:var(--glacier)}
+.route{display:inline-flex;align-items:center;gap:8px;margin:18px 0 28px;padding:11px 18px;border-radius:999px;background:var(--glacier);color:var(--snow);text-decoration:none;font-weight:700;font-size:.92rem}
+.route svg{width:18px;height:18px}
+ol.line{list-style:none;margin:0;padding:0;position:relative}
+.item{display:grid;grid-template-columns:22px 1fr;column-gap:12px}
+.time{font-weight:700;font-variant-numeric:tabular-nums;text-align:right;padding-top:1px;font-size:.98rem}
+.time span{display:block;font-weight:400;color:var(--slate);font-size:.85rem}
+.rail{position:relative}
+.rail::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--ice)}
+.item:first-child .rail::before{top:10px}
+.item:last-child .rail::before{bottom:auto;height:10px}
+.rail i{position:absolute;left:50%;top:6px;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;background:var(--frost);border:2px solid var(--glacier)}
+.item.bus .rail i{background:var(--glacier)}
+.item.eat .rail i{border-color:var(--slate)}
+.body{padding:0 0 22px}
+.body h3{margin:0;font-size:1.05rem;font-weight:700;line-height:1.35}
+.at{display:inline-block;margin-right:8px;padding:1px 8px;border-radius:999px;background:var(--glacier);color:var(--snow);font-size:.8rem;font-weight:700;font-variant-numeric:tabular-nums;vertical-align:2px}
+.item.res .rail i{background:var(--glacier)}
+.body p{margin:4px 0 0;max-width:60ch}
+.body p.hist{color:var(--night);font-size:.94rem;opacity:.88}
+.body p.tip{color:var(--slate);font-size:.86rem;font-style:italic}
+.opts{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:7px}
+.opts li{font-size:.92rem;padding-left:12px;border-left:2px solid var(--ice)}
+.opts b{display:block;font-weight:700}
+.opts span{color:var(--slate)}
+.flag{display:inline-block;margin-top:6px;font-size:.74rem;font-weight:700;letter-spacing:.04em;color:var(--glacier)}
+.flag.paid{color:var(--berry)}
+.flag.free{color:var(--spruce)}
+.flag.opt{color:var(--slate);font-style:italic;font-weight:600}
+.walk{display:block;margin-top:8px;font-size:.82rem;color:var(--slate);font-style:italic}
+h3.sec{font-family:var(--display);font-weight:400;font-size:1.45rem;margin:28px 0 6px}
+.plain{list-style:none;margin:0;padding:0}
+.plain li{padding:10px 0;border-bottom:1px solid var(--ice);display:grid;grid-template-columns:1fr auto;gap:10px;align-items:baseline}
+.plain li:last-child{border-bottom:0}
+.plain .what{font-weight:600}
+.plain .when{color:var(--slate);font-size:.88rem;grid-column:1 / -1;margin-top:-6px}
+.state{font-size:.75rem;font-weight:700;white-space:nowrap}
+.state.ok{color:var(--spruce)} .state.todo{color:var(--berry)} .state.later{color:var(--glacier)} .state.opt{color:var(--slate);font-style:italic}
+.carry{margin-top:26px;color:var(--slate);font-size:.92rem}
+.carry b{color:var(--night)}
+footer{color:var(--slate);font-size:.8rem;padding:0 0 32px}
+@media (max-width:420px){.item{column-gap:10px}.trip{font-size:2rem}}
+@media (prefers-reduced-motion:no-preference){.tab{transition:color .15s,border-color .15s}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Enero y febrero de 2027</p>
+    <h1 class="trip">Berlín, Dresden y Praga</h1>
+    <p class="sub">Del 28 de enero al 2 de febrero, para cuatro</p>
+  </header>
+</div>
+<nav class="days" aria-label="Días del viaje"><div class="tabs" id="tabs" role="tablist"></div></nav>
+<div class="wrap"><main id="view"></main>
+<footer>Solo aparecen las horas de lo que ya está reservado o tiene hora fija. Llevad el DNI, el carné de estudiante y monedas para las consignas de Dresden.</footer></div>
+
+<script>
+const H_BER = "Voltairestraße 3, 10179 Berlin";
+const H_PRG = "Masná 20, 110 00 Praha 1";
+
+const DAYS = [
+{ id:"dia-28", tab:"Jue 28", city:"Berlín", title:"Jueves 28, llegada",
+  intro:"Aterrizaje, la Isla de los Museos por la tarde y la cúpula del Reichstag de noche.",
+  route:["Alexanderplatz, Berlin","Berliner Dom, Berlin","Lustgarten, Berlin","Bebelplatz, Berlin","Brandenburger Tor, Berlin","Denkmal für die ermordeten Juden Europas, Berlin","Reichstagsgebäude, Berlin","Hackescher Markt, Berlin"],
+  stops:[
+    {r:"10:45", k:"move", n:"Llegada al aeropuerto BER", d:"Tren al centro con cuatro billetes sencillos de las zonas ABC (5 € cada uno), en la app BVG Tickets o en las máquinas; validadlos antes de subir. Con mucho equipaje, Uber."},
+    {k:"move", n:"Hotel, para dejar las maletas", d:H_BER},
+    {n:"Alexanderplatz", h:"Debe su nombre al zar Alejandro I, que visitó Berlín en 1805. Fue el corazón del Berlín Este: la Torre de Televisión (368 m, 1969) era el escaparate de la RDA, y el Reloj Mundial marca la hora de ciudades de todo el planeta."},
+    {k:"eat", n:"Comida", o:[
+      ["Zur letzten Instanz","El restaurante más antiguo de Berlín, abierto desde 1621, junto a un resto de la muralla medieval. Cocina berlinesa de verdad."],
+      ["Brauhaus Georgbräu","Cervecería con cerveza propia a orillas del Spree, en el Nikolaiviertel. Codillo y salchichas a buen precio."],
+      ["Zum Nußbaum","Taberna diminuta del Nikolaiviertel, réplica de la que frecuentaba el dibujante Heinrich Zille."],
+      ["Curry INN","La opción rápida y barata para probar la currywurst."]
+    ]},
+    {r:"14:45", n:"Catedral de Berlín", h:"La catedral protestante de los Hohenzollern, terminada en 1905. Quedó muy dañada en la guerra y no se restauró del todo hasta 1993. En su cripta hay casi un centenar de miembros de la familia real y, tras 270 escalones, la galería de la cúpula da la vuelta a todo el centro.", d:"Incluye la cúpula, la cripta y la audioguía. Llegad diez minutos antes.", f:["paid","Entrada reducida de estudiante. Comprar ya en berlinerdom.de"]},
+    {n:"Exteriores de la Isla de los Museos", h:"Cinco museos levantados entre 1830 y 1930 en una isla del río Spree, Patrimonio de la Humanidad desde 1999. Dentro están el Altar de Pérgamo y el busto de Nefertiti."},
+    {n:"Bebelplatz", h:"El 10 de mayo de 1933 los nazis quemaron aquí unos 20.000 libros. Bajo un cristal en el suelo, el memorial de Micha Ullman muestra una biblioteca vacía con sitio para todos ellos. Una placa recuerda la frase de Heine: donde se queman libros, se acaba quemando personas."},
+    {n:"Avenida Unter den Linden", h:"«Bajo los tilos»: el gran bulevar prusiano que unía el Palacio Real con la Puerta de Brandeburgo. Por el camino, la Universidad Humboldt, la Ópera Estatal y la Neue Wache."},
+    {n:"Puerta de Brandeburgo", h:"Construida en 1791 y coronada por la Cuádriga, que Napoleón se llevó a París en 1806 y volvió en 1814. Quedó atrapada en la franja del Muro y en 1989 se convirtió en el símbolo de la reunificación."},
+    {n:"Monumento al Holocausto", h:"Obra de Peter Eisenman, inaugurada en 2005: 2.711 bloques de hormigón de alturas distintas sobre un suelo ondulado. No tiene recorrido marcado; la idea es que os sintáis perdidos al caminar entre ellos."},
+    {k:"eat", n:"Un café para entrar en calor", o:[
+      ["Café Einstein Unter den Linden","Café vienés abierto en 1996, punto de encuentro de políticos y periodistas a 150 metros de la Puerta. Buenas tartas."],
+      ["Ständige Vertretung","Taberna renana que trajeron a Berlín los nostálgicos de Bonn cuando se mudó la capital, con las paredes llenas de fotos políticas."],
+      ["Lobby del Hotel Adlon","El hotel más famoso de Berlín, frente a la Puerta. Más caro, pero el sitio es historia pura."]
+    ]},
+    {r:"19:30", n:"Cúpula del Reichstag", h:"El Parlamento de 1894. Su incendio en 1933 le sirvió a Hitler para hacerse con el poder absoluto, y en 1945 los soldados soviéticos izaron su bandera en el tejado. Norman Foster le añadió en 1999 la cúpula de cristal, desde la que se ve el pleno: un símbolo de transparencia.", d:"DNI obligatorio. Estad en el control un cuarto de hora antes.", f:["free","Reserva gratuita en visite.bundestag.de"]},
+    {k:"eat", n:"Cena en Hackescher Markt", o:[
+      ["HeimWerk","Schnitzel y Käsespätzle, la opción que teníais."],
+      ["Restauration 1840","La otra opción que teníais en la zona."],
+      ["Weihenstephaner","Cocina bávara con la cerveza de la que se considera la cervecería más antigua del mundo."],
+      ["Hackescher Hof","En el primer patio de los Hackesche Höfe, con su decoración modernista de 1906."]
+    ]}
+  ]},
+
+{ id:"dia-29", tab:"Vie 29", city:"Berlín", title:"Viernes 29, el Muro y la Guerra Fría",
+  intro:"Del Muro pintado al antiguo paso fronterizo y Checkpoint Charlie. Tarde en Potsdamer Platz y el Memorial de la Resistencia, y noche en Hackescher Markt.",
+  route:["East Side Gallery, Berlin","Tränenpalast, Berlin","Gendarmenmarkt, Berlin","Checkpoint Charlie, Berlin","Topographie des Terrors, Berlin","Mall of Berlin","Sony Center, Berlin","Gedenkstätte Deutscher Widerstand, Berlin","Hackesche Höfe, Berlin"],
+  stops:[
+    {k:"move", n:"Salida del hotel", d:"Paseo junto al río Spree. Si hace mucho frío, Uber."},
+    {n:"East Side Gallery", h:"1,3 kilómetros de Muro, el tramo más largo que se conserva, pintado en 1990 por 118 artistas de 21 países. El más famoso es el beso entre Brézhnev y Honecker, de Dmitri Vrúbel."},
+    {n:"Tränenpalast", h:"El «Palacio de las Lágrimas», junto a la estación de Friedrichstraße: aquí los berlineses del Este despedían a sus familias del Oeste en el control fronterizo. Hoy es una exposición con objetos y testimonios reales.", f:["free","Gratis"]},
+    {n:"Friedrichstraße", h:"La calle de los cafés y cabarés del Berlín de los años veinte. El Muro la cortó en dos y en ella estaba Checkpoint Charlie."},
+    {n:"Gendarmenmarkt", h:"Para muchos, la plaza más bonita de Berlín: dos catedrales casi gemelas, la Francesa y la Alemana, a los lados de la Konzerthaus de Schinkel (1821). El nombre viene de un regimiento de gendarmes que tuvo aquí sus cuadras."},
+    {n:"Checkpoint Charlie", h:"El paso fronterizo para extranjeros y aliados. En octubre de 1961, tanques soviéticos y estadounidenses estuvieron 16 horas frente a frente aquí. La caseta y los sacos son una réplica."},
+    {n:"Topografía del Terror", h:"Donde estaban los cuarteles de la Gestapo y las SS, el centro de la represión nazi entre 1933 y 1945. La exposición es muy completa y, fuera, se conservan 200 metros de Muro original.", f:["free","Gratis, sin entrada"]},
+    {k:"eat", n:"Comida", o:[
+      ["Lindenbräu","Cervecería bávara bajo la cúpula del Sony Center. Raciones grandes y ambiente de taberna."],
+      ["Mall of Berlin","Zona de restaurantes con Asia Gourmet y más opciones: barato, rápido y caliente."],
+      ["Joseph-Roth-Diele","Café literario dedicado al escritor Joseph Roth, a unos 15 minutos. Platos caseros a muy buen precio."]
+    ]},
+    {n:"Potsdamer Platz y Sony Center", h:"En los años veinte era el cruce con más tráfico de Europa y tuvo el primer semáforo del continente, del que hay una réplica. El Muro lo dejó convertido en un descampado; tras 1990 se levantaron los rascacielos y el Sony Center, con su techo en forma de carpa."},
+    {n:"Memorial de la Resistencia Alemana", h:"En este edificio, el Bendlerblock, se preparó el atentado contra Hitler del 20 de julio de 1944, y en su patio fusilaron esa misma noche al coronel Stauffenberg y a sus compañeros. La exposición cuenta quiénes se opusieron al nazismo desde dentro.", d:"A unos 10 minutos de Potsdamer Platz y a cubierto.", f:["free","Gratis"]},
+    {n:"La cúpula del Sony Center iluminada", h:"De noche, el techo de tela y cristal cambia de color."},
+    {n:"Hackescher Markt", h:"Los Hackesche Höfe son ocho patios conectados de 1906, el conjunto más grande de Alemania. El primero tiene fachadas modernistas; en otro, el Museo Otto Weidt cuenta cómo un taller de cepillos protegió a trabajadores judíos ciegos."},
+    {k:"eat", n:"Cena", o:[
+      ["Zur letzten Instanz","El más antiguo de Berlín, a 10 minutos del hotel, si no fuisteis el jueves."],
+      ["Mutter Hoppe","Casa de comidas berlinesa en un sótano acogedor del Nikolaiviertel: albóndigas, codillo y hígado a la berlinesa."],
+      ["Berliner Kartoffelhaus","Todo gira alrededor de la patata, a precios ajustados."],
+      ["Schlögl's","La opción de cocina berlinesa que teníais."]
+    ]}
+  ]},
+
+{ id:"dia-30", tab:"Sáb 30", city:"Dresden", title:"Sábado 30, Dresden",
+  intro:"Bus con las maletas, consignas en la estación, el casco antiguo y el atardecer en la Terraza de Brühl antes de seguir a Praga.",
+  route:["Dresden Hauptbahnhof","Prager Straße, Dresden","Frauenkirche Dresden","Fürstenzug, Dresden","Katholische Hofkirche, Dresden","Augustusbrücke, Dresden","Residenzschloss Dresden","Semperoper Dresden","Zwinger Dresden","Brühlsche Terrasse, Dresden","Dresden Hauptbahnhof"],
+  stops:[
+    {k:"move", n:"Uber a Berlín Südkreuz", d:"Ya con las maletas. La parada exacta viene en el billete."},
+    {r:"9:15", k:"bus", n:"Bus a la estación central de Dresden", d:"FlixBus hasta Bayrische Straße, con llegada a las 11:40. Las maletas de cabina van en el maletero, sin coste.", f:["free","Comprado"]},
+    {k:"move", n:"Consignas de la estación", d:"Las de Deutsche Bahn, en Wiener Platz 4. En cada una cabe una maleta de cabina. Cuestan 3 € y solo aceptan monedas: llevad 12 € para cuatro."},
+    {n:"Avenida Prager Straße", h:"El bombardeo de febrero de 1945 arrasó el centro de Dresde. Esta gran avenida peatonal es la reconstrucción socialista, con sus bloques de los años sesenta, que une la estación con el casco antiguo."},
+    {n:"Neumarkt y Frauenkirche", h:"La iglesia barroca de George Bähr (1743) se derrumbó tras el bombardeo y quedó 50 años como montaña de escombros. Se reconstruyó entre 1994 y 2005 aprovechando las piedras originales, que son las oscuras. La cruz de la cúpula la forjó el hijo de un piloto británico que bombardeó la ciudad.", d:"Los sábados el horario cambia, así que miradlo la semana antes."},
+    {k:"eat", n:"Comida", o:[
+      ["Coselpalais","Gran café y restaurante en un palacio barroco junto a la Frauenkirche. Famoso por sus tartas; buen precio para el sitio."],
+      ["Kutscherschänke","Taberna sajona tradicional junto al Neumarkt."],
+      ["Freiberger Schankhaus","En el Neumarkt, con vistas a la Frauenkirche. Su Biergulasch."],
+      ["Pulverturm","En el antiguo polvorín de la muralla, con bóvedas y cocina sajona."]
+    ]},
+    {n:"Desfile de los Príncipes", h:"El Fürstenzug: 102 metros con unos 23.000 azulejos de porcelana de Meissen que muestran a los 35 gobernantes de Sajonia a caballo. Sobrevivió casi intacto al bombardeo."},
+    {n:"Catedral", h:"La iglesia de la corte, terminada en 1755 para unos reyes que se hicieron católicos para poder reinar también en Polonia. En su cripta se guarda el corazón de Augusto el Fuerte.", f:["free","Entrada libre"]},
+    {n:"Vista del Puente de Augusto", h:"El puente más antiguo de Dresde sobre el Elba. Esta orilla con las cúpulas es la vista que pintó Bellotto, el sobrino de Canaletto, en el siglo XVIII y que dio fama a la ciudad.", d:"Desde la plaza del Palacio, sin cruzarlo."},
+    {n:"Palacio Real", h:"Residencia de los electores y reyes de Sajonia durante siglos. Guarda la Bóveda Verde, uno de los tesoros más ricos de Europa, que sufrió un famoso robo de joyas en 2019."},
+    {n:"Plaza del Teatro y Ópera Semper", h:"La ópera de Gottfried Semper vio estrenos de Wagner y Richard Strauss. Destruida en 1945, reabrió el 13 de febrero de 1985, justo 40 años después del bombardeo."},
+    {n:"Palacio de Zwinger", h:"El palacio de fiestas de Augusto el Fuerte (1710–1728), joya del barroco. Dentro está la Galería de Maestros Antiguos con la Madonna Sixtina de Rafael, la de los dos angelitos famosos.", d:"El patio es gratis. Puede haber obras en el patio interior."},
+    {n:"Terraza de Brühl", h:"La llaman «el balcón de Europa». Era parte de la muralla y el conde Brühl la convirtió en su jardín privado; se abrió al público en 1814. El atardecer sobre el Elba es el final perfecto."},
+    {k:"move", n:"Recoger las maletas", d:"En las consignas de la estación central y, de ahí, a los andenes 1 y 2 de Bayrische Straße."},
+    {r:"17:50", k:"bus", n:"Bus a Praga, estación de Florenc", d:"FlixBus línea 060, con dirección Viena Erdberg: es el vuestro, bajad en Praga. Llega a las 19:40.", f:["free","Comprado"]},
+    {k:"move", n:"Apartamento", d:H_PRG},
+    {k:"eat", n:"Cena", o:[
+      ["Lokál Dlouhááá","A tres minutos del apartamento. Pilsner de tanque y cocina checa de siempre a muy buen precio."],
+      ["Naše Maso","La carnicería de la misma calle: hamburguesas y carne a la plancha. Para pedir o comer de pie."],
+      ["Kolkovna Celnice","Cervecería de Pilsner Urquell cerca de la plaza de la República, con platos checos y goulash."]
+    ]}
+  ]},
+
+{ id:"dia-31", tab:"Dom 31", city:"Praga", title:"Domingo 31, la Praga medieval y judía",
+  intro:"La Ciudad Vieja, el Barrio Judío al completo, la biblioteca del Clementinum y el atardecer en el Puente de Carlos.",
+  route:[H_PRG,"Staroměstské náměstí, Praha","Týnský chrám, Praha","Staronová synagoga, Praha","U Pivrnce, Maiselova, Praha","Prašná brána, Praha","Klementinum, Praha","Staroměstská mostecká věž, Praha",H_PRG],
+  stops:[
+    {k:"move", n:"Salida del apartamento"},
+    {n:"Plaza de la Ciudad Vieja y Reloj Astronómico", h:"El reloj es de 1410 y es el reloj astronómico más antiguo que sigue funcionando. A cada hora en punto desfilan los doce apóstoles mientras el esqueleto toca la campana. Las 27 cruces del suelo recuerdan a los nobles protestantes ejecutados aquí en 1621."},
+    {n:"Iglesia de Nuestra Señora de Týn", h:"Sus dos torres góticas de 80 metros son la silueta de la plaza. Dentro está enterrado el astrónomo Tycho Brahe.", d:"Donativo a la entrada. Los domingos abre poco; si está cerrada, la veis por fuera."},
+    {n:"Barrio Judío", h:"Uno de los barrios judíos mejor conservados de Europa. La Vieja-Nueva (hacia 1270) es la sinagoga en uso más antigua del continente y, según la leyenda, en su desván descansa el Golem. En la Pinkas están escritos los nombres de 80.000 víctimas checas del Holocausto, y el cementerio acumula hasta doce capas de tumbas.", d:"Hombros cubiertos; en la Vieja-Nueva os dan kipá.", f:["paid","Entrada Prague Jewish Town reducida, sin hora fija. Online a principios de diciembre o en la taquilla"]},
+    {k:"eat", n:"Comida", o:[
+      ["U Pivrnce","En el mismo Barrio Judío, cocina checa con las paredes llenas de caricaturas."],
+      ["U Rudolfina","Cervecería de las de siempre junto al Rudolfinum, con una de las mejores Pilsner de Praga y platos contundentes."],
+      ["U Pinkasů","Desde 1843, el primer local de Praga que sirvió Pilsner Urquell. Goulash y codillo."]
+    ]},
+    {n:"Torre de la Pólvora y Casa Municipal", h:"La torre gótica de 1475 era una de las puertas de la muralla y en el siglo XVII guardaba pólvora; aquí empezaba el Camino Real de las coronaciones. Al lado, en la Casa Municipal modernista (1912), se proclamó la independencia de Checoslovaquia en 1918."},
+    {r:"15:30", n:"El Clementinum", h:"Colegio jesuita desde 1556 y el segundo conjunto de edificios más grande de Praga después del Castillo. Su Biblioteca Barroca de 1722 pasa por ser una de las más bonitas del mundo, y desde la Torre Astronómica se miden la temperatura y el tiempo sin interrupción desde 1775.", d:"Visita guiada en inglés. Llevad el DNI y llegad diez minutos antes.", f:["paid","Entrada de jóvenes de 16 a 26 años. Comprar el lunes 11 de enero entre las 8:00 y las 9:00; si no sale, el lunes 18"]},
+    {n:"Atardecer en el Puente de Carlos", h:"Entráis al puente por la Torre de la Ciudad Vieja, obra gótica de Peter Parler del siglo XIV y considerada una de las más bonitas de Europa; en 1648 frenó aquí a los suecos. Al atardecer, el Castillo se recorta al otro lado del río.", f:["free","Gratis"]},
+    {k:"eat", n:"Café histórico o descanso en el apartamento", o:[
+      ["Grand Café Orient","En la Casa de la Virgen Negra (1912), el único café cubista del mundo. Pedid el věneček, su pastel típico."],
+      ["Kavárna Obecní dům","El café modernista de la Casa Municipal, con lámparas y espejos de 1912. Más caro, pero espectacular."],
+      ["Café Imperial","Paredes y techos de cerámica de 1914, a cinco minutos del apartamento."]
+    ]},
+    {k:"eat", n:"Cena", o:[
+      ["Mlejnice","La opción que teníais: goulash y cocina checa a buen precio, al lado de la plaza."],
+      ["U Tří růží","Cervecería con cerveza propia junto al Clementinum, en una casa histórica."],
+      ["U Zlatého tygra","La taberna favorita del escritor Bohumil Hrabal, donde Havel llevó a Bill Clinton en 1994. Más para cervezas que para cenar."]
+    ]}
+  ]},
+
+{ id:"dia-1", tab:"Lun 1", city:"Praga", title:"Lunes 1, la Praga real y Malá Strana",
+  intro:"El Puente de Carlos casi vacío, Malá Strana, el Castillo con el cambio de guardia y el atardecer desde las murallas de Vyšehrad.",
+  route:[H_PRG,"Karlův most, Praha","Kampa, Praha","Lennonova zeď, Praha","Kostel svatého Mikuláše, Malostranské náměstí, Praha","Pražský hrad, Praha","U Glaubiců, Malostranské náměstí, Praha","Národní divadlo, Praha","Tančící dům, Praha","Vyšehrad, Praha"],
+  stops:[
+    {k:"move", n:"Salida del apartamento"},
+    {n:"Puente de Carlos", h:"Carlos IV puso la primera piedra en 1357, según la leyenda el 9 de julio a las 5:31, un número capicúa (1357 9 7 5 31). Tiene 30 estatuas barrocas; tocar la placa de San Juan Nepomuceno, al que arrojaron desde aquí al río, trae suerte y asegura volver a Praga."},
+    {n:"Isla de Kampa", h:"Separada de Malá Strana por el canal del Diablo, con sus viejos molinos de agua. Junto al museo Kampa están los bebés gigantes de bronce de David Černý."},
+    {n:"Muro de John Lennon", h:"Tras el asesinato de Lennon en 1980, los jóvenes empezaron a pintar aquí letras de los Beatles y mensajes contra el régimen comunista. La policía lo encalaba y a la mañana siguiente volvía a estar lleno."},
+    {n:"Malá Strana e Iglesia de San Nicolás", h:"El barrio barroco al pie del Castillo. San Nicolás (1755) es la gran obra del barroco en Praga; Mozart tocó su órgano en 1787.", d:"Entrar se paga en la puerta."},
+    {n:"Calle Nerudova", h:"Antes de que existieran los números, las casas se reconocían por sus emblemas: los Tres Violines, el Cisne Dorado. La calle lleva el nombre del poeta Jan Neruda, del que Pablo Neruda tomó su seudónimo."},
+    {n:"Castillo de Praga", h:"Según el Guinness, el castillo antiguo más grande del mundo: sede de reyes de Bohemia, de emperadores y hoy del Presidente. La Catedral de San Vito tardó casi 600 años en terminarse, de 1344 a 1929. Llegad antes de mediodía para el cambio de guardia con fanfarria en el primer patio.", f:["free","Gratis por fuera, con la nave de la catedral"]},
+    {r:"13:15", k:"eat", n:"Comida en U Glaubiců", h:"Una taberna con 700 años de historia en la plaza de Malá Strana. Su goulash.", f:["free","Mesa reservada"]},
+    {n:"Puente de las Legiones y Teatro Nacional", h:"El teatro se pagó con colectas populares bajo el lema «La nación para sí misma». Ardió en 1881, a los dos meses de abrir, y los checos volvieron a pagarlo en solo dos años."},
+    {k:"eat", n:"Café histórico", o:[
+      ["Café Slavia","Enfrente del Teatro Nacional desde 1884, con vistas al Castillo. Era el café de Václav Havel y los disidentes."],
+      ["Café Louvre","Abierto en 1902 en la avenida Národní; aquí venían Kafka y Einstein. Tiene billares y buenos pasteles."]
+    ]},
+    {n:"Casa Danzante", h:"De Frank Gehry y Vlado Milunić (1996). La llaman «Ginger y Fred» porque sus dos torres parecen una pareja bailando. Se levantó en un solar que los americanos bombardearon por error en 1945."},
+    {n:"Vyšehrad", h:"La fortaleza sobre el Moldava donde, según la leyenda, la princesa Libuše profetizó el nacimiento de Praga. En su cementerio están Dvořák, Smetana y Mucha, y el panteón Slavín guarda a los grandes de la cultura checa. Las vistas al atardecer, sobre el río y el Castillo, son de las mejores de la ciudad.", f:["free","Gratis"]},
+    {k:"move", n:"Pasada por el apartamento", d:"Para dejar cosas y abrigarse más."},
+    {n:"El Puente de Carlos y el Castillo iluminados", h:"De noche, con las estatuas a contraluz y el Castillo iluminado al fondo, el puente parece otro. Volved por la calle Karlova, el antiguo Camino Real, hasta la Ciudad Vieja."},
+    {k:"eat", n:"Cena", o:[
+      ["U Medvídků","Cervecería desde 1466, con su propia cerveza. La opción que teníais."],
+      ["U Fleků","Fabrica cerveza desde 1499: la cervecería más antigua de Praga. Turística, pero su cerveza negra es historia."],
+      ["Kantýna","En un antiguo banco modernista: carnicería y restaurante con carne checa de primera a buen precio."]
+    ]}
+  ]},
+
+{ id:"dia-2", tab:"Mar 2", city:"Praga", title:"Martes 2, la Praga moderna",
+  intro:"La plaza de Wenceslao, los pasajes y Kafka por la mañana, comida y al aeropuerto.",
+  route:[H_PRG,"Václavské náměstí, Praha","Národní muzeum, Praha","Státní opera, Praha","Pasáž Lucerna, Praha","Hlava Franze Kafky, Praha"],
+  stops:[
+    {k:"move", n:"Salida del apartamento", d:"Preguntad si os guardan las maletas hasta la tarde."},
+    {n:"Plaza de Wenceslao", h:"Más que una plaza es un bulevar de 750 metros. Aquí se quemó a lo bonzo el estudiante Jan Palach en 1969 contra la ocupación soviética, y en 1989 cientos de miles de personas celebraron la Revolución de Terciopelo."},
+    {n:"Museo Nacional", h:"El edificio neorrenacentista de 1891 que cierra la plaza. En 1968 los tanques soviéticos dispararon contra su fachada creyendo que era el edificio de la radio."},
+    {n:"Ópera Estatal de Praga", h:"Se construyó en 1888 como Nuevo Teatro Alemán para la población germanohablante de la ciudad. Reabrió en 2020 tras una gran restauración."},
+    {n:"Pasaje Lucerna", h:"Lo construyó a principios del siglo XX el abuelo de Václav Havel. Del techo cuelga la estatua de David Černý: San Venceslao montado sobre un caballo muerto boca abajo, parodia de la estatua de la plaza."},
+    {n:"Cabeza de Franz Kafka", h:"Escultura de David Černý (2014): once metros y 42 placas de acero que giran por separado y vuelven a formar la cara de Kafka."},
+    {k:"eat", n:"Comida", o:[
+      ["Kantýna","A cinco minutos de la plaza de Wenceslao: carne checa de primera en un antiguo banco modernista."],
+      ["Café Louvre","A dos pasos de Kafka: el café de 1902 de Kafka y Einstein también tiene menú de comida a buen precio."],
+      ["Kravín","La opción que teníais."]
+    ]},
+    {n:"Calle Na Příkopě", h:"La calle comercial de Praga, entre la plaza de Wenceslao y la Torre de la Pólvora. Su nombre significa «en el foso»: aquí estaba el foso que separaba la Ciudad Vieja de la Nueva."},
+    {k:"bus", n:"Recoger las maletas y Uber al aeropuerto", d:"Unos 30 minutos hasta el aeropuerto. Salid con tiempo de sobra para el vuelo."},
+    {r:"19:45", k:"bus", n:"Vuelo de vuelta", f:["free","Comprado"]}
+  ]}
+];
+
+const ROUTE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h7a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h7"/></svg>';
+function routeUrl(pts){
+  const o = pts[0], d = pts[pts.length-1], w = pts.slice(1,-1).slice(0,9);
+  let u = "https://www.google.com/maps/dir/?api=1&travelmode=walking&origin="+encodeURIComponent(o)+"&destination="+encodeURIComponent(d);
+  if (w.length) u += "&waypoints=" + w.map(encodeURIComponent).join("%7C");
+  return u;
+}
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function renderTabs(active){
+  document.getElementById("tabs").innerHTML = DAYS.map(d =>
+    `<button class="tab" role="tab" id="tab-${d.id}" aria-selected="${d.id===active}" data-id="${d.id}"><b>${esc(d.tab)}</b><small>${esc(d.city)}</small></button>`).join("");
+  document.querySelectorAll(".tab").forEach(b => b.addEventListener("click", () => { location.hash = b.dataset.id; }));
+  const el = document.getElementById("tab-"+active);
+  if (el && el.scrollIntoView) el.scrollIntoView({inline:"center", block:"nearest"});
+}
+
+function renderDay(d){
+  const items = d.stops.map(s => `
+    <li class="item ${s.k||""} ${s.r?"res":""}">
+      <div class="rail"><i></i></div>
+      <div class="body">
+        <h3>${s.r?`<span class="at">${esc(s.r)}</span>`:""}${esc(s.n)}</h3>
+        ${s.h?`<p class="hist">${esc(s.h)}</p>`:""}
+        ${s.o?`<ul class="opts">${s.o.map(o=>`<li><b>${esc(o[0])}</b><span>${esc(o[1])}</span></li>`).join("")}</ul>`:""}
+        ${s.d?`<p class="tip">${esc(s.d)}</p>`:""}
+        ${s.f?`<span class="flag ${s.f[0]}">${esc(s.f[1])}</span>`:""}
+      </div>
+    </li>`).join("");
+  return `<section aria-labelledby="h-${d.id}">
+    <div class="dayhead"><p class="city">${esc(d.city)}</p><h2 id="h-${d.id}">${esc(d.title)}</h2><p class="intro">${esc(d.intro)}</p></div>
+    <a class="route" href="${routeUrl(d.route)}" target="_blank" rel="noopener">${ROUTE_ICON}Ver la ruta del día en Google Maps</a>
+    <ol class="line">${items}</ol>
+  </section>`;
+}
+
+function show(){
+  const ids = DAYS.map(d => d.id);
+  let id = (location.hash || "").replace("#","");
+  if (!ids.includes(id)) id = DAYS[0].id;
+  renderTabs(id);
+  document.getElementById("view").innerHTML = renderDay(DAYS.find(d => d.id === id));
+}
+window.addEventListener("hashchange", () => { show(); window.scrollTo(0,0); });
+show();
+</script>
+</body>
+</html>
